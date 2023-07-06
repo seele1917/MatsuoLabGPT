@@ -6,6 +6,7 @@ import { NextRouter } from "next/router";
 import { APIState, ChatState, useChatStore } from "./ChatStore";
 import { submitMessage } from "./SubmitMessage";
 import { fetchModels } from "./OpenAI";
+import axios from "axios";
 
 const get = useChatStore.getState;
 const set = useChatStore.setState;
@@ -159,3 +160,55 @@ export const refreshModels = async () => {
     console.error("Failed to fetch models:", error);
   }
 };
+
+// User
+export const setUserId = (userId: string) => set((state) => ({ userId: userId }));
+export const setJwtToken = (token: string) => set((state) => ({ jwttoken: token }));
+export const clearUser = () => set((state) => ({ userId: undefined, jwttoken: undefined }));
+
+// Character
+export const addCharacter = async (character: any) => {
+  const { userId } = get();
+  try {
+    const res = await axios.post("/api/character/add", {
+      userId: userId,
+      name: character.name,
+      shortDescription: character.shortDescription,
+      avatar: character.avatar,
+      prompt: character.prompt,
+    });
+    // const key = String(Object.keys(get().characters).length + 1)
+    // set((state) => ({ characters: { [key]: character, ...state.characters } }));
+  } catch (error) {
+    console.error("Failed to add character:", error);
+  }
+}
+
+export const setCharacters = (characters: any) => {
+  set((state) => ({ characters }));
+};
+
+export const getCharacters = async () => {
+  try {
+    const res = await axios.post("/api/character/get", {
+      userId: process.env.NEXT_PUBLIC_ADMIN_USER_ID,
+    });
+    return res.data.characters;
+  } catch (error) {
+    console.error("Failed to get characters:", error);
+  }
+}
+
+export const delCharacter = async (key: string, id: string) => {
+  try {
+    const res = await axios.post("/api/character/del", {
+      id: id
+    });
+    set((state) => {
+      const { [key]: _, ...rest }: any = state.characters;
+      return { characters: rest };
+    });
+  } catch (error) {
+    console.error("Failed to delete characters:", error);
+  }
+}

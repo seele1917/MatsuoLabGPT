@@ -1,7 +1,9 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useChatStore } from "@/stores/ChatStore";
-import { Container, rem, useMantineTheme } from "@mantine/core";
+import { addCharacter } from "@/stores/ChatActions";
+import ImageCard from "./ImageCard";
+import { Container, rem, useMantineTheme, Paper, TextInput, Button, Textarea } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
 import {
@@ -22,9 +24,15 @@ import philosopher from "../public/chars/philosopher.png";
 import stephen_hawking from "../public/chars/stephen_hawking.png";
 import therapist from "../public/chars/therapist.png";
 import tolle from "../public/chars/tolle.png";
+import robot from "../public/chars/robot.png";
+import life_coach from "../public/chars/life_coach.png";
 import { useRouter } from "next/router";
 import { addChat, setChosenCharacter } from "@/stores/ChatActions";
 import { submitMessage } from "@/stores/SubmitMessage";
+
+const images = [
+  robot, debate, expert, idea_generator, life_coach, philosopher, therapist
+]
 
 const scriptBase = ({
   character,
@@ -45,14 +53,19 @@ Stay in character!
 The person’s first line is:
 
 Hello
+
+and describe yourself.
+
+Answer in japanese.
 `;
 };
 
-const characters = {
+let characters = {
   "Expert in Everything": {
     shortDescription: "Ask me anything!",
     avatar: expert,
-    prompt: `I want you to act as a a world-leading expert in whatever I'm about to ask you.`,
+    prompt: `I want you to act as a a world-leading expert in whatever I'm about to ask you. First, describe yourself.
+    Answer in Japanese.`,
   },
   Therapist: {
     shortDescription: "Techniques to change your beliefs",
@@ -66,6 +79,7 @@ const characters = {
     prompt: `  Rules:
 1. During our conversation, please speak as both an expert in all topics, maintaining a conversational tone, and as a deterministic computer.  Kindly adhere to my requests with precision.
 2. Stop where I ask you to stop
+3. Answer in Japanese
 
 # (1) Introduction
 1. While Loop (While I still want to answer your clarifying questions):
@@ -160,7 +174,7 @@ Ask me what my idea is.`,
   Philosopher: {
     shortDescription: "Ethics, logic, and reasoning",
     avatar: philosopher,
-    prompt: `I want you to act as a philosopher. I will provide some topics or questions related to the study of philosophy, and it will be your job to explore these concepts in depth. This could involve conducting research into various philosophical theories, proposing new ideas or finding creative solutions for solving complex problems. My first request is "I need help developing an ethical framework for decision making."`,
+    prompt: `I want you to act as a philosopher. I will provide some topics or questions related to the study of philosophy, and it will be your job to explore these concepts in depth. This could involve conducting research into various philosophical theories, proposing new ideas or finding creative solutions for solving complex problems. My first request is "I need help developing an ethical framework for decision making." Answer in japanese.`,
   },
   "Debate Champion": {
     shortDescription: "Articulate and quick-witted",
@@ -216,8 +230,29 @@ function CardsCarousel({ children }: { children: React.ReactNode }) {
   );
 }
 
+
+
 export default function NewChatCarousel() {
   const router = useRouter();
+  const [newCharacterName, setNewCharacterName] = useState("");
+  const [newCharacterShortDescription, setNewCharacterShortDescription] = useState("");
+  const [newCharacterImage, setNewCharacterImage] = useState("");
+  const [newCharacterDescription, setNewCharacterDescription] = useState("")
+
+  const addNewCharacter = () => {
+    const newCharacter = {
+      name: newCharacterName,
+      shortDescription: newCharacterShortDescription,
+      avatar: newCharacterImage ? newCharacterImage : robot.src,
+      prompt: newCharacterDescription
+    };
+    characters = { [newCharacterName]: {
+      shortDescription: newCharacterShortDescription, 
+      avatar: newCharacterImage ? { src: newCharacterImage }  : robot,
+      prompt: newCharacterDescription
+    }, ...characters }
+    addCharacter(newCharacter);
+  };
 
   return (
     <Container py="xl">
@@ -251,6 +286,62 @@ export default function NewChatCarousel() {
           );
         })}
       </CardsCarousel>
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "left",
+          marginTop: "30px"
+        }}
+      >
+        <Paper p="md" shadow="xs" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <TextInput
+            label="Character Name"
+            placeholder="Enter new character's name"
+            value={newCharacterName}
+            onChange={(event) => setNewCharacterName(event.currentTarget.value)}
+            style={{ width: "500px", marginBottom: "15px" }}
+          />
+          <TextInput
+            label="Character Short Description"
+            placeholder="Enter new character's short desctiption"
+            value={newCharacterShortDescription}
+            onChange={(event) => setNewCharacterShortDescription(event.currentTarget.value)}
+            style={{ width: "500px", marginBottom: "15px" }}
+          />
+          <span style={{width: "100%", textAlign: 'left', fontWeight: '500', fontSize: '0.875rem'}}>Character Image</span>
+          <div style={{ width: "500px", marginBottom: "15px" }}>
+            <CardsCarousel>
+              {Object.keys(images).map((key) => {
+                // @ts-ignore
+                const image = images[key];
+                return (
+                  <ImageCard 
+                    image={image.src}
+                    onClick={() => {
+                      setNewCharacterImage(image.src)
+                    }}
+                    key={key}
+                    style={image.src === newCharacterImage ? {border: '2px solid gray'} : {}}
+                  />
+                );
+              })}
+            </CardsCarousel>
+          </div>
+          <Textarea
+            label="Character Description"
+            placeholder="Enter new character's description"
+            value={newCharacterDescription}
+            onChange={(event) => setNewCharacterDescription(event.currentTarget.value)}
+            style={{ width: "500px", marginBottom: "15px", marginTop: "15px" }}
+            autosize
+            minRows={8}
+          />
+          <Button onClick={addNewCharacter} style={{ width: "200px", marginBottom: "15px" }} color="blue">Add New Character</Button>
+        </Paper>
+      </div>
       <div
         style={{
           flex: 1,

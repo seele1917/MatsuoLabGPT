@@ -14,6 +14,7 @@ import ChatMessage from "./ChatMessage";
 import { IconChevronsDown } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { setActiveChatId } from "@/stores/ChatActions";
+import axios from "axios";
 
 const useStyles = createStyles((theme: MantineTheme) => ({
   container: {
@@ -158,17 +159,29 @@ const ChatDisplay = () => {
     window.scrollTo(0, document.body.scrollHeight);
   };
 
+  const userId = useChatStore((state) => state.userId);
+  useEffect(() => {
+    if(activeChat === undefined) return;
+    try {
+      const res = axios.post("/api/chat/add", {
+        userId: userId,
+        ...activeChat
+      });
+    } catch (error) {
+      console.error("Failed to add chat:", error);
+    }
+  }, [activeChat?.tokensUsed])
+
   return (
     <div
       className={classes.container}
       style={{ paddingBottom: pushToTalkMode ? "7em" : "5em" }}
     >
       <div className={classes.chatContainer}>
-        <MuHeader />
 
         {!activeChatId && <NewChat />}
         {activeChat?.messages.map((message, idx) => (
-          <ChatMessage key={message.id} message={message} />
+          idx==0 ? undefined: <ChatMessage key={message.id} message={message} />
         ))}
       </div>
       {!isScrolledToBottom && (

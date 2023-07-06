@@ -81,11 +81,6 @@ const chunkify = (text: string | undefined) => {
 export const initPlayback = () => {
   const { apiKey } = getVars();
   if (!apiKey) {
-    notifications.show({
-      title: "API keys for TTS not set",
-      message: "Please set API keys for TTS in the settings.",
-      color: "red",
-    });
     return;
   }
 

@@ -56,7 +56,7 @@ interface SettingsForm {
 }
 
 export const defaultSettings = {
-  model: "gpt-3.5-turbo",
+  model: "gpt-4",
   temperature: 1,
   top_p: 1,
   n: 1,
@@ -68,8 +68,8 @@ export const defaultSettings = {
   auto_title: true,
   // Whisper
   auto_detect_language: false,
-  spoken_language: "English (en)",
-  spoken_language_code: "en",
+  spoken_language: "Japanese (ja)",
+  spoken_language_code: "ja",
   // ElevenLabs
   voice_id: "21m00Tcm4TlvDq8ikWAM",
   // Azure
@@ -121,6 +121,9 @@ export interface ChatState {
   modelChoiceTTS: string | undefined;
   modelChoiceSTT: string | undefined;
   textInputValue: string;
+  jwttoken: string | undefined,
+  userId: string | undefined,
+  characters: Array<Object> | [],
 }
 export const initialState = {
   apiState: "idle" as APIState,
@@ -162,6 +165,9 @@ export const initialState = {
   modelChoiceTTS: "azure",
   modelChoiceSTT: "azure",
   textInputValue: "",
+  jwttoken: undefined,
+  userId: undefined,
+  characters: [],
 };
 
 const store = () => ({ ...initialState } as ChatState);

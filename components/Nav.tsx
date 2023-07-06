@@ -22,6 +22,7 @@ import {
   IconArrowRight,
   IconEdit,
   IconKey,
+  IconLogout,
   IconMoon,
   IconPlus,
   IconSettings,
@@ -38,6 +39,7 @@ import {
   deleteChat,
   setNavOpened,
   updateChat,
+  clearUser,
 } from "@/stores/ChatActions";
 
 const useStyles = createStyles((theme) => ({
@@ -312,6 +314,17 @@ export default function NavbarSimple() {
         )}
 
         <a
+          href="/"
+          className={classes.link}
+          onClick={() => clearUser()}
+        >
+          <IconLogout className={classes.linkIcon} stroke={1.5} />
+          <span>
+            Logout
+          </span>
+        </a>
+
+        <a
           href="#"
           className={classes.link}
           onClick={() => toggleColorScheme()}
@@ -326,7 +339,7 @@ export default function NavbarSimple() {
           <KeyModal close={closeKeyModal} />
         </Modal>
 
-        <a
+        {/* <a
           href="#"
           className={classes.link}
           onClick={(event) => {
@@ -338,7 +351,7 @@ export default function NavbarSimple() {
         >
           <IconKey className={classes.linkIcon} stroke={1.5} />
           <span>API Keys</span>
-        </a>
+        </a> */}
 
         <Modal
           opened={openedSettingsModal}

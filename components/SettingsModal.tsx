@@ -129,15 +129,6 @@ export default function SettingsModal({ close }: { close: () => void }) {
             >
               OpenAI
             </Tabs.Tab>
-            <Tabs.Tab
-              value="azure"
-              icon={<IconMicrophone size={px("0.8rem")} />}
-            >
-              Azure
-            </Tabs.Tab>
-            <Tabs.Tab value="11labs" icon={<IconBraces size={px("0.8rem")} />}>
-              ElevenLabs
-            </Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="openai" pt="xs">
             <Accordion defaultValue="general">

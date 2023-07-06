@@ -30,6 +30,7 @@ export default function App(props: AppProps) {
 
   const apiKey = useChatStore((state) => state.apiKey);
   const playerMode = useChatStore((state) => state.playerMode);
+  const jwttoken = useChatStore((state) => state.jwttoken);
 
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -45,7 +46,7 @@ export default function App(props: AppProps) {
   return (
     <>
       <Head>
-        <title>YakGPT</title>
+        <title>MatsuoLabGPT</title>
         <meta name="description" content="A new ChatGPT UI" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -94,7 +95,7 @@ export default function App(props: AppProps) {
           <Notifications />
           <AppShell
             padding={0}
-            navbar={<Nav />}
+            navbar={jwttoken ? <Nav />: undefined}
             layout="alt"
             navbarOffsetBreakpoint="sm"
             asideOffsetBreakpoint="sm"
@@ -110,7 +111,7 @@ export default function App(props: AppProps) {
             <div style={{ position: "relative", height: "100%" }}>
               <Component {...pageProps} />
 
-              {apiKey && <UIController />}
+              {jwttoken && <UIController />}
             </div>
             {playerMode && <AudioPlayer />}
           </AppShell>
