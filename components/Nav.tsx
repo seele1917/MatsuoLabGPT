@@ -314,7 +314,7 @@ export default function NavbarSimple() {
         )}
 
         <a
-          href="/"
+          href="#"
           className={classes.link}
           onClick={() => clearUser()}
         >
