@@ -96,7 +96,7 @@ export default function App(props: AppProps) {
           <Notifications />
           <AppShell
             padding={0}
-            navbar={jwttoken ? <Nav />: undefined}
+            navbar={<Nav />}
             layout="alt"
             navbarOffsetBreakpoint="sm"
             asideOffsetBreakpoint="sm"
