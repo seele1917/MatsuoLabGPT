@@ -5,7 +5,9 @@ import {
   createStyles,
   getStylesRef,
   rem,
+  ActionIcon,
 } from "@mantine/core";
+import { IconDots, IconEye, IconFileZip, IconTrash, IconCircleX, IconEdit } from '@tabler/icons-react';
 import { MouseEventHandler } from "react";
 import Image from "next/image";
 import { useMediaQuery } from "@mantine/hooks";
@@ -59,6 +61,18 @@ const useStyles = createStyles((theme) => ({
   description: {
     color: theme.colors.dark[7],
   },
+
+  deleteIcon: {
+    position: 'absolute',
+    top: theme.spacing.sm,
+    right: theme.spacing.sm,
+  },
+
+  editIcon: {
+    position: 'absolute',
+    top: theme.spacing.sm,
+    left: theme.spacing.sm,
+  },
 }));
 
 interface ImageCardProps {
@@ -66,6 +80,8 @@ interface ImageCardProps {
   title: string;
   description: string;
   onClick?: MouseEventHandler<HTMLAnchorElement>;
+  onDelete?: MouseEventHandler<HTMLAnchorElement>;
+  onEdit?: MouseEventHandler<HTMLAnchorElement>;
 }
 
 export default function ImageCard({
@@ -73,6 +89,8 @@ export default function ImageCard({
   title,
   description,
   onClick,
+  onDelete,
+  onEdit,
 }: ImageCardProps) {
   const { classes, theme } = useStyles();
 
@@ -100,7 +118,18 @@ export default function ImageCard({
         />
       </div>
       <div className={classes.overlay} />
-
+      {/* <ActionIcon className={classes.deleteIcon} onClick={() => {onDelete}}>
+        <IconCircleX 
+          size={24}
+          strokeWidth={2}
+        />
+      </ActionIcon>
+      <ActionIcon className={classes.editIcon} onClick={() => {onEdit}}>
+        <IconEdit 
+          size={24}
+          strokeWidth={2}
+        />
+      </ActionIcon> */}
       <div className={classes.content}>
         <div>
           <Text size="lg" className={classes.title} weight={500}>
