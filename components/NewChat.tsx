@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useChatStore } from "@/stores/ChatStore";
 import { addCharacter } from "@/stores/ChatActions";
 import ImageCard from "./ImageCard";
-import { Container, rem, useMantineTheme, Paper, TextInput, Button, Textarea } from "@mantine/core";
+import { Container, rem, useMantineTheme, Paper, TextInput, Button, Textarea, Text } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
 import {
@@ -12,6 +12,7 @@ import {
   IconArrowRight,
 } from "@tabler/icons-react";
 import BGCard from "./BGCard";
+import { notifications } from "@mantine/notifications";
 
 import dalai_lama from "../public/chars/dalai_lama.png";
 import debate from "../public/chars/debate.png";
@@ -61,6 +62,11 @@ Answer in japanese.
 };
 
 let characters = {
+  "広島弁GPT": {
+    shortDescription: "広島弁ですべて答えます",
+    avatar: expert,
+    prompt: `あなたは広島出身の人です。広島弁ですべて答えてください。`,
+  },
   "Expert in Everything": {
     shortDescription: "Ask me anything!",
     avatar: expert,
@@ -234,6 +240,7 @@ function CardsCarousel({ children }: { children: React.ReactNode }) {
 
 export default function NewChatCarousel() {
   const router = useRouter();
+  const [error, setError] = useState("");
   const [newCharacterName, setNewCharacterName] = useState("");
   const [newCharacterShortDescription, setNewCharacterShortDescription] = useState("");
   const [newCharacterImage, setNewCharacterImage] = useState("");
@@ -253,6 +260,27 @@ export default function NewChatCarousel() {
     }, ...characters }
     addCharacter(newCharacter);
   };
+
+  // Send request with form data to the API
+  const submitHandler = async (e: any) => {
+    e.preventDefault();
+    try {
+      if (newCharacterName && newCharacterShortDescription && newCharacterImage && newCharacterDescription) {
+        addNewCharacter();
+        notifications.show({
+          title: "Success!",
+          message: "Character added successfully!",
+          color: "white",
+        });
+      } else {
+        setError("Please fill in all fields");
+      }
+    } catch (error: any) {
+        setError(error.response.data.message);
+        console.error(error);
+    }
+  };
+
 
   return (
     <Container py="xl">
@@ -286,7 +314,8 @@ export default function NewChatCarousel() {
           );
         })}
       </CardsCarousel>
-      <div
+      <form
+        onSubmit={submitHandler}
         style={{
           flex: 1,
           display: "flex",
@@ -339,9 +368,14 @@ export default function NewChatCarousel() {
             autosize
             minRows={8}
           />
-          <Button onClick={addNewCharacter} style={{ width: "200px", marginBottom: "15px" }} color="blue">Add New Character</Button>
+          {error && (
+            <Text color="red" size="sm" style={{ marginBottom: "0.5rem" }}>
+              {error}
+            </Text>
+          )}
+          <Button type="submit" style={{ width: "200px", marginBottom: "15px" }} color="blue">Add New Character</Button>
         </Paper>
-      </div>
+      </form>
       <div
         style={{
           flex: 1,
